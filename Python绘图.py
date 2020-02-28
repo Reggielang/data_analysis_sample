@@ -64,3 +64,24 @@ sub_df[[0,1]].plot(kind = 'bar',stacked = True)
 #%%
 from stack2dim import *
 stack2dim(df,i = 'district',j = 'school') 
+
+#%% - 一个分类变量和一个连续变量的分析（按照某个变量进行分组）
+df.price.groupby(df.district).mean().plot(kind='bar')
+df.price.groupby(df.district).mean().sort_values(ascending =True ).plot(kind='barh')
+
+#体现一个分类变量和连续变量的关系时通常使用一个箱线图
+sns.boxplot(x = 'district',y = 'price', data = df)
+
+#连续变量通常作为value，分类变量通常作为行index，以及列columns
+df.pivot_table(values = 'price', index = 'district',columns = 'school',aggfunc = np.mean)
+
+df.pivot_table(values = 'price', index = 'district',columns = 'school',aggfunc = np.mean).plot(kind = 'bar')
+
+
+
+# %%
+#两个连续变量---使用area和price做散点图，分析area是否影响单位面积房价
+
+df.plot.scatter(x = 'AREA', y = 'price')
+
+
