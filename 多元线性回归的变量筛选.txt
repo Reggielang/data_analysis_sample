@@ -1,0 +1,40 @@
+# ### 多元线性回归的变量筛选
+
+# In[11]:
+
+'''forward select'''
+def forward_select(data, response):
+    remaining = set(data.columns)
+    remaining.remove(response)
+    selected = []
+    current_score, best_new_score = float('inf'), float('inf')
+    while remaining:
+        aic_with_candidates=[]
+        for candidate in remaining:
+            formula = "{} ~ {}".format(
+                response,' + '.join(selected + [candidate]))
+            aic = ols(formula=formula, data=data).fit().aic
+            aic_with_candidates.append((aic, candidate))
+        aic_with_candidates.sort(reverse=True)
+        best_new_score, best_candidate=aic_with_candidates.pop()
+        if current_score > best_new_score: 
+            remaining.remove(best_candidate)
+            selected.append(best_candidate)
+            current_score = best_new_score
+            print ('aic is {},continuing!'.format(current_score))
+        else:        
+            print ('forward selection over!')
+            break
+            
+    formula = "{} ~ {} ".format(response,' + '.join(selected))
+    print('final formula is {}'.format(formula))
+    model = ols(formula=formula, data=data).fit()
+    return(model)
+
+
+# In[12]:
+
+data_for_select = exp[['avg_exp', 'Income', 'Age', 'dist_home_val', 
+                       'dist_avg_income']]
+lm_m = forward_select(data=data_for_select, response='avg_exp')
+print(lm_m.rsquared)
