@@ -18,7 +18,7 @@ mpl.rcParams['axes.unicode_minus'] = False
 
 
 #%%
-os.chdir(r'C:\Users\REGGIE\Desktop\数据分析资料\280_Ben_八大直播八大案例配套课件\实例')
+os.chdir('C:\Users\REGGIE\Desktop\数据分析资料\280_Ben_八大直播八大案例配套课件\实例')
 df = pd.read_csv('sndHsPr.csv')
 #%%--一个变量的分析
 district = {'fengtai':'丰台区', 'haidian': '海淀区',  'chaoyang': '朝阳区', 'dongcheng':'东城区', 'xicheng':'西城区', 'shijingshan':'石景山区'}
