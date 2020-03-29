@@ -1,0 +1,64 @@
+X于X之间的关系，如果两个X之间有共线性，那么模型是不稳定的。
+
+方差膨胀因子> 10，表示某变量的多重共线性严重，把改变量剔除出模型
+
+具体代码如下：
+def vif(df, col_i):
+    from statsmodels.formula.api import ols
+    
+    cols = list(df.columns)
+    cols.remove(col_i)
+    cols_noti = cols
+    formula = col_i + '~' + '+'.join(cols_noti)
+    r2 = ols(formula, df).fit().rsquared
+    return 1. / (1. - r2)
+
+for i in exog.columns:
+    print(i, '\t', vif(df=exog, col_i=i))
+
+
+#- 多元逻辑回归
+# 向前选择法
+def forward_select(data, response):
+    remaining = set(data.columns)
+    remaining.remove(response)
+    selected = []
+    current_score, best_new_score = float('inf'), float('inf')
+    while remaining:
+        aic_with_candidates=[]
+        for candidate in remaining:
+            formula = "{} ~ {}".format(
+                response,' + '.join(selected + [candidate]))
+            aic = smf.glm(
+                formula=formula, data=data, 
+                family=sm.families.Binomial(sm.families.links.logit)
+            ).fit().aic
+            aic_with_candidates.append((aic, candidate))
+        aic_with_candidates.sort(reverse=True)
+        best_new_score, best_candidate=aic_with_candidates.pop()
+        if current_score > best_new_score: 
+            remaining.remove(best_candidate)
+            selected.append(best_candidate)
+            current_score = best_new_score
+            print ('aic is {},continuing!'.format(current_score))
+        else:        
+            print ('forward selection over!')
+            break
+            
+    formula = "{} ~ {} ".format(response,' + '.join(selected))
+    print('final formula is {}'.format(formula))
+    model = smf.glm(
+        formula=formula, data=data, 
+        family=sm.families.Binomial(sm.families.links.logit)
+    ).fit()
+    return(model)
+
+
+# In[16]:
+#只有连续变量可以进行变量筛选，分类变量需要进行WOE转换才可以进行变量筛选
+candidates = ['bad_ind','tot_derog','age_oldest_tr','tot_open_tr','rev_util','fico_score','loan_term','ltv',
+              'veh_mileage','dti_hist','dti_mew','fta','nth','nta']
+data_for_select = train[candidates]
+
+lg_m1 = forward_select(data=data_for_select, response='bad_ind')
+lg_m1.summary()
