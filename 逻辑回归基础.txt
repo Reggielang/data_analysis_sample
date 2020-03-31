@@ -1,0 +1,52 @@
+##  分类变量的相关关系
+
+# 交叉表
+
+# In[6]:
+cross_table = pd.crosstab(accepts.used_ind,accepts.bad_ind, margins=True)
+#cross_table = pd.crosstab(accepts.bankruptcy_ind,accepts.bad_ind, margins=True)
+
+cross_table
+
+
+# 列联表
+
+# In[7]:
+
+def percConvert(ser):
+    return ser/float(ser[-1])
+
+cross_table.apply(percConvert, axis=1)
+
+
+# In[8]:
+
+print('''chisq = %6.4f 
+p-value = %6.4f
+dof = %i 
+expected_freq = %s'''  %stats.chi2_contingency(cross_table.iloc[:2, :2]))
+
+#主要看P值和期望频次
+
+# - 绘制ROC曲线
+#- 曲线下围成的面积就是AUC
+
+import sklearn.metrics as metrics
+
+fpr_test, tpr_test, th_test = metrics.roc_curve(test.bad_ind, test.proba)
+fpr_train, tpr_train, th_train = metrics.roc_curve(train.bad_ind, train.proba)
+
+plt.figure(figsize=[3, 3])
+plt.plot(fpr_test, tpr_test, 'b--')
+plt.plot(fpr_train, tpr_train, 'r-')
+plt.title('ROC curve')
+plt.show()
+
+print('AUC = %.4f' %metrics.auc(fpr_test, tpr_test))
+
+
+# 混淆矩阵
+
+真实和预测的交叉表
+pd.crosstab(test.bad_ind, test.prediction, margins=True)
+其中灵敏度（A/（A+B）） 命中率（A/（A+C））比较重要
