@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+from scipy import stats
 
 os.chdir(r'C:\Users\REGGIE\Desktop\数据分析资料\280_Ben_八大直播八大案例配套课件\实例')
 
@@ -50,7 +51,7 @@ cross_table
 
 train = df.sample(frac=0.7, random_state=1234).copy()
 test = df[~ df.index.isin(train.index)].copy()
-print(' 训练集样本量: {1} \n 测试集样本量: {2}'.format((len(train), len(test))))
+print('训练集样本量: {0}, 测试集样本量: {1}'.format(len(train), len(test)))
 #%%
 #建立模型
 lg = smf.glm('churn ~ duration', data=train, 
@@ -137,7 +138,59 @@ exog = train[candidates].drop(['churn'], axis=1)
 
 for i in exog.columns:
     print(i, '\t', vif(df=exog, col_i=i))
-#posTrend,negTrend;curPlan,avgplan有明显的共线性问题,剔除其中两个后重新建模.
+ 
+#vif 大于10，并且两个变量之间的vif接近就代表具有强共线性
+#posTrend,negTrend;curPlan,avgplan,nrProm,prom有明显的共线性问题,剔除他们具有强共线性中的一个重新建模.
 #%%
-final_data = data_for_select.drop(labels=['curPlan','avgplan'],axis=1)
-final_data
+final_data = ['churn','duration','AGE','edu_class','posTrend','nrProm','curPlan','planChange','incomeCode','feton','peakMinAv','peakMinDiff','call_10086']
+data_for_select = train[final_data]
+
+lg_m2 = forward_select(data=data_for_select, response='churn')
+lg_m2.summary()
+#%%
+#再次检验共线性问题
+exog = train[final_data].drop(['churn'], axis=1)
+
+for i in exog.columns:
+    print(i, '\t', vif(df=exog, col_i=i))
+#模型最优，不存在共线性，并且AIC已经最低
+
+    
+#%%
+#2.机器学习中的回归
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+candidates = ['duration','AGE','edu_class','posTrend','negTrend','nrProm','prom','curPlan','avgplan','planChange','incomeCode','feton','peakMinAv','peakMinDiff','call_10086']
+#data_for_select = churn[candidates]
+scaler = StandardScaler()  # 标准化
+X = scaler.fit_transform(df[candidates])
+y = df['churn']
+    
+#%%
+#建立模型
+from sklearn import linear_model
+from sklearn.svm import l1_min_c
+cs = l1_min_c(X, y, loss='log') * np.logspace(0, 4)
+
+
+print("Computing regularization path ...")
+#start = datetime.now()
+clf = linear_model.LogisticRegression(C=1.0, tol=1e-6)
+coefs_ = []
+for c in cs:
+    clf.set_params(C=c)
+    clf.fit(X, y)
+    coefs_.append(clf.coef_.ravel().copy())
+#print("This took ", datetime.now() - start)
+
+coefs_ = np.array(coefs_)
+plt.plot(np.log10(cs), coefs_)
+ymin, ymax = plt.ylim()
+plt.xlabel('log(C)')
+plt.ylabel('Coefficients')
+plt.title('Logistic Regression Path')
+plt.axis('tight')
+plt.show()    
+
+ 
