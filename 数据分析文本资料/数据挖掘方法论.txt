@@ -1,0 +1,48 @@
+# # 数据挖掘方法论──SEMMA模型训练使用流程
+# 
+# - Sample──数据取样
+# 
+# - Explore──数据特征探索、分析和预处理
+# 
+# - Modify──问题明确化、数据调整和技术选择
+# 
+# - Model──模型的研发、知识的发现
+# 
+# - Assess──模型和知识的综合解释和评价
+# 
+# # 数据获取与导入的S（抽样）阶段。
+# 
+# ## 规整数据集
+
+
+# ## 根据IV值筛选变量 - 分类变量
+iv_d = {}
+for i in var_d:
+    iv_d[i] = WoE(v_type='d').fit(X[i].copy(), Y.copy()).iv
+
+pd.Series(iv_d).sort_values(ascending = False)
+
+# 保留iv值较高的分类变量
+var_d_s = ['StatusCat96NK', 'DemCluster']
+
+# ## 根据IV值筛选变量-连续变量
+
+iv_c = {}
+for i in var_c:
+    iv_c[i] = WoE(v_type='c',t_type='b',qnt_num=3).fit(X[i],Y).iv 
+
+sort_iv_c = pd.Series(iv_c).sort_values(ascending=False)
+sort_iv_c
+
+# 以 2% 作为选取变量的阈值
+var_c_s = list(sort_iv_c[sort_iv_c > 0.02].index)
+var_c_s
+# In[11]:
+X = model_data[var_c_s + var_d_s].copy()
+Y = model_data[y].copy()
+
+查看异常值的方便方法
+如果这个差值很大，那么存在异常值
+# 利用众数减去中位数的差值除以四分位距来查找是否有可能存在异常值
+abs((X[var_c_s].mode().iloc[0,] - X[var_c_s].median()) /
+    (X[var_c_s].quantile(0.75) - X[var_c_s].quantile(0.25)))
