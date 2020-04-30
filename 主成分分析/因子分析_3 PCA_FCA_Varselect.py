@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 28 23:26:04 2018
-
-@author: Ben
-"""
-
-
 # coding: utf-8
 """
 CNT_TBM 柜台交易次数	
@@ -17,9 +9,6 @@ CNT_CSC 有偿服务次数
 # 一、主成分分析
 
 # - 1、引入数据
-
-# In[1]:
-
 
 import pandas as pd
 import os
@@ -97,9 +86,6 @@ data = pd.DataFrame(data)#注意data数据需要标准化
 fa_score = pd.DataFrame(np.dot(data, fas))
 
 # ### 第三步：根据因子得分进行数据分析
-
-# In[25]:
-
 
 a=fa_score.rename(columns={0: "Gross", 1: "Avg"})
 profile_bank_fa=model_data.join(a)

@@ -1,4 +1,3 @@
-
 # coding: utf-8
 """
 X1	GDP
@@ -12,11 +11,7 @@ X8	海关出口总额
 X9	地方财政收入
 """
 # 一、主成分分析
-
 # - 1、引入数据
-
-# In[1]:
-
 
 import pandas as pd
 import os
@@ -41,7 +36,6 @@ from sklearn import preprocessing
 data = preprocessing.scale(data)
 # - 4、使用sklearn的主成分分析，用于判断保留主成分的数量
 
-# In[5]:
 from sklearn.decomposition import PCA
 '''说明：1、第一次的n_components参数应该设的大一点
    说明：2、观察explained_variance_ratio_和explained_variance_的取值变化，建议explained_variance_ratio_累积大于0.85，explained_variance_需要保留的最后一个主成分大于0.8，
@@ -72,14 +66,11 @@ fa = FactorAnalysis.load_data_samples(
         )
 fa.extract_components()
 
-
 # - 2、设定提取主成分的方式。默认为“broken_stick”方法，建议使用“top_n”法
 
-# In[8]:
 fa.find_comps_to_retain(method='top_n',num_keep=2)
 # - 3、通过最大方差法进行因子旋转
 
-# In[9]:
 pd.DataFrame(fa.comps["rot"])#查看因子权重
 fa.rotate_components(method='varimax')
 fa_plotting.graph_summary(fa)
@@ -137,9 +128,6 @@ plt.show()
 #该算法并不能达到人为调整的效果。而且并不能保证每次保留的变量是一致的（原因1、SparsePCA：本身就具有随机性；2、脚本中也随机抽样的），
 #只能保证保留的变量是不相关的
 #其特点只是比较省人力，可以自动化运行
-
-# In[65]:
-
 
 def Var_Select(orgdata, k, alphaMax=10, alphastep=0.2):
     """
@@ -211,7 +199,6 @@ def Var_Select(orgdata, k, alphaMax=10, alphastep=0.2):
     
 
 
-# In[66]:
 import os
 os.chdir(r"D:\Python_Training\script_Python\13Dimensionality_reduction")
 model_data = pd.read_csv("cities_10.csv",encoding='gbk')
@@ -219,7 +206,6 @@ model_data.head()
 data = model_data.loc[ :,'X1':]
 
 
-# In[67]:
 Varseled_data=Var_Select(data,k=2)
 #%%
 

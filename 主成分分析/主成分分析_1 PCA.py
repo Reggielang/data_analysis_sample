@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jun 29 21:26:31 2018
-
 @author: Ben
 """
 
@@ -57,7 +56,7 @@ pca=PCA(n_components=1).fit(data)#综上,2个主成分
 newdata=pca.fit_transform(data)
 citi10_pca=model_data.join(pd.DataFrame(newdata))
 # In[6]:
-'''通过主成分在每个变量上的权重的绝对值大小，确定每个主成分的代表性
+'''表示每一个主成分在每个变量上的权重的绝对值大小-可以确定每个主成分的代表性 ，主成分P1乘以每个权重的绝对值最后相加，结果就是主成分。
 '''
 pd.DataFrame(pca.components_).T
 #%%
