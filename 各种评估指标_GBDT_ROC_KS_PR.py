@@ -4,7 +4,7 @@
 # In[ ]:
 #宽带营销的数据"broadband.csv"
 
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 import sklearn.tree as tree
 import sklearn.ensemble as ensemble
 import pandas as pd
@@ -12,17 +12,13 @@ import sklearn.metrics as metrics
 from sklearn.model_selection import GridSearchCV
 
 import os
-os.chdir(r"D:\Python_Training\script_Python\17Ensemble\gbdt_Metrics")
+os.chdir(r"C:\Users\REGGIE\Documents\GitHub\data_analysis_sample\data")
 
 # In[ ]:
-
-
 model_data = pd.read_csv("./broadband.csv")
 # In[ ]:
-
-
 target = model_data["BROADBAND"]
-orgData1 = model_data.ix[ :,1:-2]
+orgData1 = model_data.iloc[ :,1:-2]
 
 # %%
 #from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score,  precision_recall_curve, average_precision_score
@@ -97,6 +93,8 @@ plot_result(test_target, test_est, y_predicted_probas)
 tr_pred_prob=clfcv.predict_proba(train_data)[:,1]
 ts_pred_prob=clfcv.predict_proba(test_data)[:,1]
 metrics_roc(test_target, train_target,ts_pred_prob,tr_pred_prob)
+#训练ROC远高于测试ROC-出现过度拟合
+
 #%%
 metrics_pr(test_target, train_target,ts_pred_prob,tr_pred_prob)
 #%%
@@ -122,10 +120,7 @@ plot_result(test_target, test_est, y_predicted_probas)
 tr_pred_prob=gbc.predict_proba(train_data)[:,1]
 ts_pred_prob=gbc.predict_proba(test_data)[:,1]
 metrics_roc(test_target, train_target,ts_pred_prob,tr_pred_prob)
+#训练ROC远高于测试ROC-出现过度拟合
 #%%
 metrics_pr(test_target, train_target,ts_pred_prob,tr_pred_prob)
-#%%
 
-
-
-#%%
