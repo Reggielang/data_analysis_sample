@@ -4,7 +4,7 @@
 
 # - 1、引入数据
 import os
-os.chdir(r"D:\Python_Training\script_Python\14Clustor")
+os.chdir(r"C:\Users\REGGIE\Documents\GitHub\data_analysis_sample\data")
 
 # In[1]:
 
@@ -154,7 +154,7 @@ result=kmeans.fit(fa_scores)
 
 
 model_data_l=model_data.join(pd.DataFrame(result.labels_))
-model_data_l=model_data_l.rename(columns={0: "clustor"})
+model_data_l=model_data_l.rename(columns={0: "cluster"})
 model_data_l.head()
 
 
@@ -164,7 +164,7 @@ model_data_l.head()
 
 import matplotlib
 get_ipython().magic('matplotlib inline')
-model_data_l.clustor.value_counts().plot(kind = 'pie') 
+model_data_l.cluster.value_counts().plot(kind = 'pie') 
 
 
 # ### 4.2 k-means聚类的第二种方式：进行变量分布的正态转换--用于客户细分
@@ -212,7 +212,7 @@ result=kmeans.fit(fa_scores_trans)
 
 
 model_data_l=model_data.join(pd.DataFrame(result.labels_))
-model_data_l=model_data_l.rename(columns={0: "clustor"})
+model_data_l=model_data_l.rename(columns={0: "cluster"})
 model_data_l.head()
 
 
@@ -221,7 +221,7 @@ model_data_l.head()
 
 import matplotlib
 get_ipython().magic('matplotlib inline')
-model_data_l.clustor.value_counts().plot(kind = 'pie') 
+model_data_l.cluster.value_counts().plot(kind = 'pie') 
 
 
 # In[31]:
