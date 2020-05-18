@@ -1,15 +1,13 @@
 
 # coding: utf-8
-# # 第十四讲 聚类
 
-# 
 # # 1、层次聚类
 
 # ### 第一步：手动测试主成分数量
 
 # - 1、引入数据
 import os
-os.chdir(r"D:\Python_Training\script_Python\14Clustor")
+os.chdir(r"C:\Users\REGGIE\Documents\GitHub\data_analysis_sample\data")
 
 # In[1]:
 
@@ -101,7 +99,7 @@ fa_plotting.graph_summary(fa)
 
 # In[10]:
 
-
+#查看因子权重
 pd.DataFrame(fa.comps["rot"])
 
 
