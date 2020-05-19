@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 # In[ ]:
 #Transactions---自行车及周边物品的销售数据
 
-inverted=pd.read_csv(r'D:\Python_Training\script_Python\15Association\Transactions.csv')
+inverted=pd.read_csv(r'C:\Users\REGGIE\Documents\GitHub\data_analysis_sample\data\Transactions.csv')
 inverted.head()
 
 
@@ -29,11 +29,8 @@ inverted.head()
 
 # In[ ]:
 
-
 idataset=apri.dataconvert(inverted,tidvar='OrderNumber',itemvar='Model',data_type = 'inverted')
 idataset[:5]
-
-
 # ## 关联规则
 
 # 参数说明:
@@ -48,10 +45,7 @@ idataset[:5]
 # 设定参数为:minSupport=0.05,minConf=0.5,minlen=1,maxlen=10
 
 # In[ ]:
-
-
 res = apri.arules(idataset,minSupport=0.01,minConf=0.1,minlen=1,maxlen=2)
-
 
 # ## 产生关联规则
 
@@ -60,7 +54,7 @@ res = apri.arules(idataset,minSupport=0.01,minConf=0.1,minlen=1,maxlen=2)
 # In[ ]:
 
 
-res.ix[res.lift>1,:].sort_values('support',ascending=False).head(20)
+res.loc[res.lift>1,:].sort_values('support',ascending=False).head(20)
 
 
 # ## 关联规则结果汇总

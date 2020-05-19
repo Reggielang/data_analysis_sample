@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import os 
 
 
-os.chdir(r'C:\Users\REGGIE\Desktop\数据分析资料\280_Ben_八大直播八大案例配套课件\实例\data')
+os.chdir(r'C:\Users\REGGIE\Documents\GitHub\data_analysis_sample\data')
 inverted=pd.read_csv('Prod.csv')
 inverted.head()
 
