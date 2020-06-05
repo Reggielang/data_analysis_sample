@@ -1,0 +1,57 @@
+1. 无监督算法通常可用于探索性的目的，
+而不是作为大型自动化系统的一部分。无监督算法的另一个常见应用是作为监督算法的预
+处理步骤。学习数据的一种新表示，有时可以提高监督算法的精度，或者可以减少内存占
+用和时间开销。
+
+2.一些算法（如神经网络和 SVM）对数据缩放非常敏感。因此，通常的
+做法是对特征进行调节，使数据表示更适合于这些算法。
+
+3.为了让监督模型能够在测试集上运行，对训练集和测试集应用完全相同的变换（降维）是很重要
+的。
+
+4 e.g:
+# 使用0-1缩放进行预处理
+scaler = MinMaxScaler()
+scaler.fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+# 在缩放后的训练数据上学习SVM
+svm.fit(X_train_scaled, y_train)
+
+4.主成分分析（principal component analysis，PCA）是一种旋转数据集的方法，旋转后的特
+征在统计上不相关。这种
+变换有时用于去除数据中的噪声影响，或者将主成分中保留的那部分信息可视化。PCA 最常见的应用之一就是将高维数据集可视化。
+
+5.两个类别的直方图（所有特征）这样我们可以了解每个特征在两个类别中的分布情况，也可
+以猜测哪些特征能够更好地区分良性样本和恶性样本。
+fig, axes = plt.subplots(15, 2, figsize=(10, 20))
+malignant = cancer.data[cancer.target == 0]
+benign = cancer.data[cancer.target == 1]
+ax = axes.ravel()
+for i in range(30):
+ _, bins = np.histogram(cancer.data[:, i], bins=50)
+ ax[i].hist(malignant[:, i], bins=bins, color=mglearn.cm3(0), alpha=.5)
+ ax[i].hist(benign[:, i], bins=bins, color=mglearn.cm3(2), alpha=.5)
+ ax[i].set_title(cancer.feature_names[i])
+ ax[i].set_yticks(())
+ax[0].set_xlabel("Feature magnitude")
+ax[0].set_ylabel("Frequency")
+ax[0].legend(["malignant", "benign"], loc="best")
+fig.tight_layout()
+但是，这种图无法向我们展示变量之间的相互作用以及这种相互作用与类别之间的关系。
+利用 PCA，我们可以获取到主要的相互作用，并得到稍为完整的图像。
+
+6. PCA 的一个缺点在于，通常不容易对图中的两个轴做出解释。主成分对应于原始数据中的
+方向，所以它们是原始特征的组合。
+
+7. 聚类的应用与评估是一个非常定性的过程，通常在数据分析的探索阶
+段很有帮助。我们学习了三种聚类算法：k 均值、DBSCAN 和凝聚聚类。这三种算法都
+可以控制聚类的粒度（granularity）。k 均值和凝聚聚类允许你指定想要的簇的数量，而
+DBSCAN 允许你用 eps 参数定义接近程度，从而间接影响簇的大小。三种方法都可以用于
+大型的现实世界数据集，都相对容易理解，也都可以聚类成多个簇。
+每种算法的优点稍有不同。k 均值可以用簇的平均值来表示簇。它还可以被看作一种分解
+方法，每个数据点都由其簇中心表示。DBSCAN 可以检测到没有分配任何簇的“噪声点”，
+还可以帮助自动判断簇的数量。与其他两种方法不同，它允许簇具有复杂的形状，正如我
+们在 two_moons 的例子中所看到的那样。DBSCAN 有时会生成大小差别很大的簇，这可能
+是它的优点，也可能是缺点。凝聚聚类可以提供数据的可能划分的整个层次结构，可以通
+过树状图轻松查看。
