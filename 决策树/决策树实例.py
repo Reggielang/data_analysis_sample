@@ -229,7 +229,7 @@ gcv.best_score_
 gcv.best_params_
 
 #%%
-#根据最有参数再次进行建模
+#根据最优参数再次进行建模
 from sklearn.neural_network import MLPClassifier
 
 mlp2 = MLPClassifier(hidden_layer_sizes=(5,5), 

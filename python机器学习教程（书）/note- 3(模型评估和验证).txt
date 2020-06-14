@@ -1,0 +1,60 @@
+1.交叉验证
+交叉验证（cross-validation）是一种评估泛化性能的统计学方法，它比单次划分训练集和测
+试集的方法更加稳定、全面。在交叉验证中，数据被多次划分，并且需要训练多个模型。
+最常用的交叉验证是 k 折交叉验证（k-fold cross-validation），其中 k 是由用户指定的数字，
+通常取 5 或 10。在执行 5 折交叉验证时，首先将数据划分为（大致）相等的 5 部分，每一
+部分叫作折（fold）。接下来训练一系列模型。
+
+scikit-learn 是利用 model_selection 模块中的 cross_val_score 函数来实现交叉验证的。
+cross_val_score 函数的参数是我们想要评估的模型、训练数据与真实标签。
+
+e.g: 
+logreg = LogisticRegression()
+scores = cross_val_score(logreg, iris.data, iris.target)
+print("Cross-validation scores: {}".format(scores))
+
+(默认情况下，cross_val_score 执行 3 折交叉验证，返回 3 个精度值。可以通过修改 cv 参
+数来改变折数)
+scores = cross_val_score(logreg, iris.data, iris.target, cv=5)
+
+总结交叉验证精度的一种常用方法是计算平均值：
+In[6]:
+print("Average cross-validation score: {:.2f}".format(scores.mean()))
+
+重要的是要记住，交叉验证不是一种构建可应用于新数据的模型的方法。交
+叉验证不会返回一个模型。在调用 cross_val_score 时，内部会构建多个模
+型，但交叉验证的目的只是评估给定算法在特定数据集上训练后的泛化性能
+好坏。
+
+2.如前所述，交叉验证是在特定数据集上对给定算法进行评估的一种方法。但
+它通常与网格搜索等参数搜索方法结合使用。因此，许多人使用交叉验证
+（cross-validation）这一术语来通俗地指代带交叉验证的网格搜索。
+
+拟合 GridSearchCV 对象不仅会搜索最佳参数，还会利用得到最佳交叉验证性能的参数在
+整个训练数据集上自动拟合一个新模型。
+
+能够访问实际找到的模型，这有时是很有帮助的，比如查看系数或特征重要性。你可以用
+best_estimator_ 属性来访问最佳参数对应的模型，它是在整个训练集上训练得到的
+e.g:
+#参数调优
+#%%
+from sklearn.model_selection import GridSearchCV
+from sklearn import metrics
+
+param_grid = {
+    'max_depth':[2,3,4,5,6,7,8],
+    'min_samples_split':[4,8,12,16,20,24,28] 
+}
+clf = tree.DecisionTreeClassifier(criterion='entropy')
+clfcv = GridSearchCV(estimator=clf, param_grid=param_grid, 
+                   scoring='roc_auc', cv=4)
+clfcv.fit(train_data, train_target)
+clfcv.best_params_
+
+print("Best estimator:\n{}".format(grid_search.best_estimator_))
+
+
+首先，我们调节的参数对于获得良好的性能
+非常重要。这两个参数（C 和 gamma）都很重要，因为调节它们可以将精度从 40% 提高到
+96%。此外，在我们选择的参数范围中也可以看到输出发生了显著的变化。同样重要的是
+要注意，参数的范围要足够大：每个参数的最佳取值不能位于图像的边界上。
