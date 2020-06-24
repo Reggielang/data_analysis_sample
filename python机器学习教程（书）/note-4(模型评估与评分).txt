@@ -1,0 +1,47 @@
+1.对于二分类问题的评估结果，一种最全面的表示方法是使用混淆矩阵（confusion matrix）。
+
+2.
+准确率、召回率与 f-分数。总结混淆矩阵还有几种方法，其中最常见的就是准确率和召回
+率。准确率（precision）度量的是被预测为正例的样本中有多少是真正的正例
+
+虽然准确率和召回率是非常重要的度量，但是仅查看二者之一无法为你提供完整的图景。
+将两种度量进行汇总的一种方法是 f-分数（f-score）或 f-度量（f-measure），它是准确率与
+召回率的调和平均
+
+如果我们想要对准确率、召回率和 f1- 分数做一个更全面的总结，可以使用 classifi
+cation_report 这个很方便的函数，它可以同时计算这三个值。
+
+e.g:
+from sklearn.metrics import classification_report
+print(classification_report(y_test, pred_most_frequent,
+ target_names=["not nine", "nine"]))
+
+
+
+3.
+大多数分类器都提供了一个 decision_function 或 predict_proba 方法来评估预测的不确定度。预测可以被看作是以某个固定点作为 decision_function 或 predict_proba 输出的阈值——在二分类问题中，我
+们使用 0 作为决策函数的阈值，0.5 作为 predict_proba 的阈值。默认情况下，decision_function 值大于 0 的点
+将被划为类别 1。我们希望将更多的点划为类别 1，所以需要减小阈值：
+e.g:
+y_pred_lower_threshold = svc.decision_function(X_test) > -.8
+
+4.
+还有一种常用的工具可以分析不同阈值的分类器行为：受试者工作特征曲线（receiver
+operating characteristics curve），简称为 ROC 曲线（ROC curve）。与准确率 - 召回率曲
+线类似，ROC 曲线考虑了给定分类器的所有可能的阈值，但它显示的是假正例率（false
+positive rate，FPR）和真正例率（true positive rate，TPR）
+
+与准确率 - 召回率曲线一样，我们通常希望使用一个数字来总结 ROC 曲线，即曲线下的
+面积［通常被称为 AUC（area under the curve），这里的曲线指的就是 ROC 曲线］。我们可
+以利用 roc_auc_score 函数来计算 ROC 曲线下的面积。对于不平衡类别的分类问题，使用 AUC 进
+行模型选择通常比使用精度更有意义。
+
+5.回归问题
+业务决策有时是根据均方误差或平均绝对误差做出的，这可能会鼓励人们使用这些指标来调节模型。但是一般来说，我们认为 R2 是评估回归模型的更直观的指标。
+
+6
+对于分类问题，scoring 参数最重要的取值包括：accuracy（默认值）、roc_auc（ROC 曲
+线下方的面积）、average_precision（准确率 - 召回率曲线下方的面积）、f1、f1_macro、
+f1_micro 和 f1_weighted（这四个是二分类的 f1- 分数以及各种加权变体）。对于回归问题，
+最常用的取值包括：r2（R2 分数）、mean_squared_error（均方误差）和 mean_absolute_
+error（平均绝对误差）。
